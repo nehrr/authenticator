@@ -4,6 +4,10 @@ import { StackNavigator } from "react-navigation";
 import { BarCodeScanner, Permissions } from "expo";
 
 class Scan extends React.Component {
+  constructor() {
+    super();
+    this.isRead = false;
+  }
   state = {
     hasCameraPermission: null
   };
@@ -24,7 +28,6 @@ class Scan extends React.Component {
       return (
         <View style={{ flex: 1 }}>
           <BarCodeScanner
-            // onBarCodeRead={({ type, data }) => this.props.navigation.goBack()}
             onBarCodeRead={this._handleBarCodeRead}
             style={StyleSheet.absoluteFill}
           />
@@ -34,9 +37,17 @@ class Scan extends React.Component {
   }
 
   _handleBarCodeRead = ({ type, data }) => {
-    const regex = /^otpauth:\/\/totp\/(.+)\?secret=(.+)&issuer=(.*)/;
-    console.log(data.match(regex));
-    this.props.navigation.goBack();
+    if (!this.isRead) {
+      this.isRead = true;
+      const regex = /^otpauth:\/\/totp\/(.+)\?secret=(.+)&issuer=(.*)/;
+      let array = data.match(regex);
+      this.props.navigation.state.params.add({
+        host: array[1],
+        secret: array[2],
+        issuer: array[3]
+      });
+      this.props.navigation.goBack();
+    }
   };
 }
 
