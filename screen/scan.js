@@ -14,7 +14,6 @@ class Scan extends React.Component {
   }
 
   render() {
-    console.disableYellowBox = true;
     const { hasCameraPermission } = this.state;
 
     if (hasCameraPermission === null) {
@@ -35,9 +34,9 @@ class Scan extends React.Component {
   }
 
   _handleBarCodeRead = ({ type, data }) => {
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    const regex = /^otpauth:\/\/totp\/(.+)\?secret=(.+)&issuer=(.*)/;
+    console.log(data.match(regex));
     this.props.navigation.goBack();
-    console.log(data);
   };
 }
 

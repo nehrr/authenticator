@@ -3,6 +3,8 @@ import { StackNavigator } from "react-navigation";
 import Home from "./screen/home";
 import Scan from "./screen/scan";
 
+console.disableYellowBox = true;
+
 export default class App extends React.Component {
   render() {
     return <RootStack />;
