@@ -5,12 +5,27 @@ import Scan from "./screen/scan";
 
 export default class App extends React.Component {
   render() {
-    return <Root />;
+    return <RootStack />;
   }
 }
 
-const Root = StackNavigator({
+const MainStack = StackNavigator({
   Home: {
     screen: Home
   }
 });
+
+const RootStack = StackNavigator(
+  {
+    Main: {
+      screen: MainStack
+    },
+    Modal: {
+      screen: Scan
+    }
+  },
+  {
+    mode: "modal",
+    headerMode: "none"
+  }
+);

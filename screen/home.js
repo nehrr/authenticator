@@ -3,13 +3,23 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
 class Home extends React.Component {
   static navigationOptions = {
-    title: "Authenticator"
+    title: "Authenticator",
+    headerStyle: {
+      backgroundColor: "#598DEF"
+    },
+    headerTintColor: "#fff",
+    headerTitleStyle: {
+      fontWeight: "bold"
+    }
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <TouchableOpacity style={styles.buttonGreen}>
+        <TouchableOpacity
+          style={styles.buttonGreen}
+          onPress={() => this.props.navigation.navigate("Modal")}
+        >
           <Text style={styles.text}>Add</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.buttonRed}>
