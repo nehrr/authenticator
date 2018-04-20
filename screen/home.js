@@ -5,7 +5,8 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 import _ from "lodash";
 
@@ -19,12 +20,14 @@ class Home extends React.Component {
     };
   }
 
-  async componentDidMount() {
+  async componentWillMount() {
+    console.log("will mount");
     try {
       const value = await AsyncStorage.getItem("@MySuperStore:list");
       if (value !== null) {
-        this.setState({ user: JSON.parse(value) });
-        console.log(JSON.parse(value));
+        this.setState({ user: JSON.parse(value).user });
+        console.log("data");
+        console.log(JSON.parse(value).user);
       } else {
         console.log("no storage");
       }
@@ -44,46 +47,27 @@ class Home extends React.Component {
     }
   };
 
-  async update() {
+  async update(value) {
     try {
-      await AsyncStorage.setItem(
-        "@MySuperStore:list",
-        JSON.stringify(this.state.user)
-      );
+      await AsyncStorage.setItem("@MySuperStore:list", JSON.stringify(value));
     } catch (error) {
       // Error saving data
     }
   }
 
+  async delete() {
+    await AsyncStorage.removeItem("@MySuperStore:list");
+  }
+
   //call update method (async) to use setItem
   add = data => {
-    let test = false;
-    if (_.isEmpty(this.state.user)) {
-      console.log("isempty");
-      this.setState(prevState => ({
-        user: [...prevState.user, data]
-      }));
-      this.update();
-      return;
-    }
-
-    for (const aUser of this.state.user) {
-      if (aUser.secret == data.secret) {
-        console.log(aUser.secret == data.secret);
-        test = false;
-      } else {
-        test = true;
-      }
-    }
-
-    if (test) {
-      this.setState(prevState => ({
-        user: [...prevState.user, data]
-      }));
-      this.update();
-    }
-    if (!test) {
+    if (_.some(this.state.user.secret)) {
       alert("This code has already been scanned!");
+    } else {
+      this.setState(prevState => ({
+        user: [...prevState.user, data]
+      }));
+      this.update({ user: [...this.state.user, data] });
     }
   };
 
@@ -92,23 +76,27 @@ class Home extends React.Component {
     this.setState({
       user: []
     });
+    this.delete();
   }
 
   render() {
     const list = this.state.user.map((aUser, idx) => {
       return (
         <View key={idx} style={styles.cell}>
-          <Text style={styles.textScroll}>
-            {aUser.secret} |
-            {aUser.issuer} |
-            {aUser.host}
-          </Text>
+          <TouchableOpacity>
+            <Text style={styles.textScroll}>
+              {aUser.secret} |
+              {aUser.issuer} |
+              {aUser.host}
+            </Text>
+          </TouchableOpacity>
         </View>
       );
     });
 
     return (
       <View style={styles.container}>
+        {list.length > 0 && <ScrollView>{list}</ScrollView>}
         <TouchableOpacity
           style={styles.buttonGreen}
           onPress={() =>
@@ -121,7 +109,6 @@ class Home extends React.Component {
         <TouchableOpacity style={styles.buttonRed} onPress={() => this.clear()}>
           <Text style={styles.text}>Clear</Text>
         </TouchableOpacity>
-        <ScrollView>{list}</ScrollView>
       </View>
     );
   }
