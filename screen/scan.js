@@ -39,6 +39,7 @@ class Scan extends React.Component {
   _handleBarCodeRead = ({ type, data }) => {
     if (!this.isRead) {
       this.isRead = true;
+      //if regex not matched error > does not add
       const regex = /^otpauth:\/\/totp\/(.+)\?secret=(.+)&issuer=(.*)/;
       let array = data.match(regex);
       this.props.navigation.state.params.add({

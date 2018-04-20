@@ -13,6 +13,17 @@ import _ from "lodash";
 const { width, height } = Dimensions.get("window");
 
 class Home extends React.Component {
+  static navigationOptions = {
+    title: "Authenticator",
+    headerStyle: {
+      backgroundColor: "#598DEF"
+    },
+    headerTintColor: "#fff",
+    headerTitleStyle: {
+      fontWeight: "bold"
+    }
+  };
+
   constructor() {
     super();
     this.state = {
@@ -20,6 +31,7 @@ class Home extends React.Component {
     };
   }
 
+  //DATA RETRIEVAL/MODIFICATION/REMOVAL
   async componentWillMount() {
     console.log("will mount");
     try {
@@ -36,17 +48,6 @@ class Home extends React.Component {
     }
   }
 
-  static navigationOptions = {
-    title: "Authenticator",
-    headerStyle: {
-      backgroundColor: "#598DEF"
-    },
-    headerTintColor: "#fff",
-    headerTitleStyle: {
-      fontWeight: "bold"
-    }
-  };
-
   async update(value) {
     try {
       await AsyncStorage.setItem("@MySuperStore:list", JSON.stringify(value));
@@ -59,15 +60,15 @@ class Home extends React.Component {
     await AsyncStorage.removeItem("@MySuperStore:list");
   }
 
-  //call update method (async) to use setItem
+  //FUNCTIONS MODIFYING STATE
   add = data => {
-    if (_.some(this.state.user.secret)) {
-      alert("This code has already been scanned!");
-    } else {
+    if (!_.some(this.state.user, data)) {
       this.setState(prevState => ({
         user: [...prevState.user, data]
       }));
       this.update({ user: [...this.state.user, data] });
+    } else {
+      alert("This code has already been scanned!");
     }
   };
 
@@ -79,11 +80,19 @@ class Home extends React.Component {
     this.delete();
   }
 
+  removeOne = value => {
+    let array = this.state.user;
+    array.splice(_.findIndex(array, value), 1);
+    this.setState({ user: array });
+    this.update({ user: array });
+  };
+
+  //RENDER
   render() {
     const list = this.state.user.map((aUser, idx) => {
       return (
         <View key={idx} style={styles.cell}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => this.removeOne(aUser)}>
             <Text style={styles.textScroll}>
               {aUser.secret} |
               {aUser.issuer} |
@@ -114,6 +123,7 @@ class Home extends React.Component {
   }
 }
 
+//UI
 const styles = StyleSheet.create({
   container: {
     flex: 1,
