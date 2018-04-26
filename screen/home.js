@@ -10,8 +10,7 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import _ from "lodash";
-
-const { width, height } = Dimensions.get("window");
+import styles from "../style/styles";
 
 class Home extends React.Component {
   static navigationOptions = {
@@ -110,50 +109,5 @@ const mapStateToProps = state => {
     user: state.user
   };
 };
-
-//UI
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
-
-  buttonGreen: {
-    backgroundColor: "#99C27C",
-    alignItems: "center",
-    justifyContent: "center",
-    height: 52,
-    marginRight: 16,
-    marginLeft: 16,
-    marginTop: 16,
-    marginBottom: 16
-  },
-
-  buttonRed: {
-    backgroundColor: "#AA4244",
-    alignItems: "center",
-    justifyContent: "center",
-    height: 52,
-    marginRight: 16,
-    marginLeft: 16,
-    marginBottom: 32
-  },
-
-  text: {
-    color: "#fff",
-    fontWeight: "bold"
-  },
-
-  textScroll: {
-    color: "#000"
-  },
-
-  cell: {
-    borderWidth: 1,
-    borderColor: "#828289",
-    width: width,
-    padding: 20
-  }
-});
 
 export default connect(mapStateToProps)(Home);
