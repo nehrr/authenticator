@@ -2,12 +2,14 @@ import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { StackNavigator } from "react-navigation";
 import { BarCodeScanner, Permissions } from "expo";
+import { connect } from "react-redux";
 
 class Scan extends React.Component {
   constructor() {
     super();
     this.isRead = false;
   }
+
   state = {
     hasCameraPermission: null
   };
@@ -42,14 +44,24 @@ class Scan extends React.Component {
       //if regex not matched error > does not add
       const regex = /^otpauth:\/\/totp\/(.+)\?secret=(.+)&issuer=(.*)/;
       let array = data.match(regex);
-      this.props.navigation.state.params.add({
-        host: array[1],
-        secret: array[2],
-        issuer: array[3]
-      });
+      // this.props.navigation.state.params.add({
+      //   host: array[1],
+      //   secret: array[2],
+      //   issuer: array[3]
+      // });
+      const [host, secret, issuer] = array.slice(1);
+      const res = { host, secret, issuer };
+
+      this.props.dispatch({ type: "add", payload: res });
       this.props.navigation.goBack();
     }
   };
 }
 
-export default Scan;
+const mapStateToProps = state => {
+  return {
+    user: state.user
+  };
+};
+
+export default connect(mapStateToProps)(Scan);

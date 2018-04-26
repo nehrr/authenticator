@@ -8,6 +8,7 @@ import {
   Dimensions,
   AsyncStorage
 } from "react-native";
+import { connect } from "react-redux";
 import _ from "lodash";
 
 const { width, height } = Dimensions.get("window");
@@ -24,72 +25,75 @@ class Home extends React.Component {
     }
   };
 
-  constructor() {
-    super();
-    this.state = {
-      user: []
-    };
-  }
+  // constructor() {
+  //   super();
+  //   this.state = {
+  //     user: []
+  //   };
+  // }
 
   //DATA RETRIEVAL/MODIFICATION/REMOVAL
-  async componentWillMount() {
-    console.log("will mount");
-    try {
-      const value = await AsyncStorage.getItem("@MySuperStore:list");
-      if (value !== null) {
-        this.setState({ user: JSON.parse(value).user });
-        console.log("data");
-        console.log(JSON.parse(value).user);
-      } else {
-        console.log("no storage");
-      }
-    } catch (error) {
-      // Error retrieving data
-    }
-  }
-
-  async update(value) {
-    try {
-      await AsyncStorage.setItem("@MySuperStore:list", JSON.stringify(value));
-    } catch (error) {
-      // Error saving data
-    }
-  }
-
-  async delete() {
-    await AsyncStorage.removeItem("@MySuperStore:list");
-  }
+  // async componentWillMount() {
+  //   console.log("will mount");
+  //   try {
+  //     const value = await AsyncStorage.getItem("@MySuperStore:list");
+  //     if (value !== null) {
+  //       this.setState({ user: JSON.parse(value).user });
+  //       console.log("data");
+  //       console.log(JSON.parse(value).user);
+  //     } else {
+  //       console.log("no storage");
+  //     }
+  //   } catch (error) {
+  //     // Error retrieving data
+  //   }
+  // }
+  //
+  // async update(value) {
+  //   try {
+  //     await AsyncStorage.setItem("@MySuperStore:list", JSON.stringify(value));
+  //   } catch (error) {
+  //     // Error saving data
+  //   }
+  // }
+  //
+  // async delete() {
+  //   await AsyncStorage.removeItem("@MySuperStore:list");
+  // }
 
   //FUNCTIONS MODIFYING STATE
   add = data => {
-    if (!_.some(this.state.user, data)) {
-      this.setState(prevState => ({
-        user: [...prevState.user, data]
-      }));
-      this.update({ user: [...this.state.user, data] });
-    } else {
-      alert("This code has already been scanned!");
-    }
+    this.props.dispatch({ type: "add" });
+    // if (!_.some(this.state.user, data)) {
+    //   this.setState(prevState => ({
+    //     user: [...prevState.user, data]
+    //   }));
+    //   this.update({ user: [...this.state.user, data] });
+    // } else {
+    //   alert("This code has already been scanned!");
+    // }
   };
 
   clear() {
+    this.props.dispatch({ type: "clear" });
     //removeItem
-    this.setState({
-      user: []
-    });
-    this.delete();
+    // this.setState({
+    //   user: []
+    // });
+    // this.delete();
   }
 
   removeOne = value => {
-    let array = this.state.user;
-    array.splice(_.findIndex(array, value), 1);
-    this.setState({ user: array });
-    this.update({ user: array });
+    this.props.dispatch({ type: "removeOne" });
+    // let array = this.state.user;
+    // array.splice(_.findIndex(array, value), 1);
+    // this.setState({ user: array });
+    // this.update({ user: array });
   };
 
   //RENDER
   render() {
-    const list = this.state.user.map((aUser, idx) => {
+    const list = this.props.user.map((aUser, idx) => {
       return (
         <View key={idx} style={styles.cell}>
           <TouchableOpacity onPress={() => this.removeOne(aUser)}>
@@ -122,6 +126,12 @@ class Home extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    user: state.user
+  };
+};
 
 //UI
 const styles = StyleSheet.create({
@@ -168,4 +178,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Home;
+export default connect(mapStateToProps)(Home);

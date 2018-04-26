@@ -1,13 +1,61 @@
 import React from "react";
 import { StackNavigator } from "react-navigation";
+import { Provider } from "react-redux";
+import { createStore } from "redux";
+import _ from "lodash";
 import Home from "./screen/home";
 import Scan from "./screen/scan";
 
 console.disableYellowBox = true;
 
+const initState = {
+  user: [
+    {
+      issuer: "Test",
+      secret: "TestSecret",
+      host: "TestLabel"
+    }
+  ]
+};
+
+function reducer(prevState = initState, action) {
+  switch (action.type) {
+    case "add":
+      if (!_.some(prevState.user, action.payload)) {
+        console.log(action.payload);
+        return Object.assign({}, prevState, {
+          user: [...prevState.user, action.payload]
+        });
+      } else {
+        alert("This code has already been scanned!");
+        return prevState;
+      }
+    case "clear":
+      return Object.assign({}, prevState, {
+        user: []
+      });
+    case "removeOne":
+      let array = prevState.user;
+      array.splice(_.findIndex(array, value), 1);
+      this.setState({ user: array });
+      this.update({ user: array });
+      return Object.assign({}, prevState, {
+        user: array
+      });
+    default:
+      return prevState;
+  }
+}
+
+const store = createStore(reducer);
+
 export default class App extends React.Component {
   render() {
-    return <RootStack />;
+    return (
+      <Provider store={store}>
+        <RootStack />
+      </Provider>
+    );
   }
 }
 
