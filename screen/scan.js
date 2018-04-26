@@ -44,11 +44,7 @@ class Scan extends React.Component {
       //if regex not matched error > does not add
       const regex = /^otpauth:\/\/totp\/(.+)\?secret=(.+)&issuer=(.*)/;
       let array = data.match(regex);
-      // this.props.navigation.state.params.add({
-      //   host: array[1],
-      //   secret: array[2],
-      //   issuer: array[3]
-      // });
+
       const [host, secret, issuer] = array.slice(1);
       const res = { host, secret, issuer };
 

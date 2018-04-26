@@ -25,13 +25,6 @@ class Home extends React.Component {
     }
   };
 
-  // constructor() {
-  //   super();
-  //   this.state = {
-  //     user: []
-  //   };
-  // }
-
   //DATA RETRIEVAL/MODIFICATION/REMOVAL
   // async componentWillMount() {
   //   console.log("will mount");
@@ -64,31 +57,16 @@ class Home extends React.Component {
   //FUNCTIONS MODIFYING STATE
   add = data => {
     this.props.dispatch({ type: "add" });
-    // if (!_.some(this.state.user, data)) {
-    //   this.setState(prevState => ({
-    //     user: [...prevState.user, data]
-    //   }));
     //   this.update({ user: [...this.state.user, data] });
-    // } else {
-    //   alert("This code has already been scanned!");
-    // }
   };
 
   clear() {
     this.props.dispatch({ type: "clear" });
-    //removeItem
-    // this.setState({
-    //   user: []
-    // });
     // this.delete();
   }
 
   removeOne = value => {
     this.props.dispatch({ type: "removeOne" });
-    // let array = this.state.user;
-    // array.splice(_.findIndex(array, value), 1);
-    // this.setState({ user: array });
-    // this.update({ user: array });
   };
 
   //RENDER
