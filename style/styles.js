@@ -1,12 +1,20 @@
 import React from "react";
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Platform } from "react-native";
 
 //UI
 const { width, height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    // backgroundColor: "#fff",
+    ...Platform.select({
+      ios: {
+        backgroundColor: "#FFFFFF"
+      },
+      android: {
+        backgroundColor: "#21252B"
+      }
+    })
   },
 
   buttonGreen: {
@@ -44,6 +52,18 @@ const styles = StyleSheet.create({
     borderColor: "#828289",
     width: width,
     padding: 20
+  },
+
+  image: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 52
+  },
+
+  textBlack: {
+    color: "#000",
+    fontWeight: "bold",
+    marginTop: 152
   }
 });
 

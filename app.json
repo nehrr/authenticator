@@ -1,5 +1,14 @@
 {
   "expo": {
-    "sdkVersion": "26.0.0"
+    "sdkVersion": "26.0.0",
+    "name": "Authenticator",
+    "slug": "auth-nehrr",
+    "privacy": "public",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/fenris.png",
+      "backgroundColor": "#FFFFFF",
+      "resizeMode": "contain"
+    }
   }
 }

@@ -7,7 +7,8 @@ import {
   ScrollView,
   Dimensions,
   AsyncStorage,
-  Alert
+  Alert,
+  Image
 } from "react-native";
 import { connect } from "react-redux";
 
@@ -27,38 +28,45 @@ class Home extends React.Component {
   };
 
   //DATA RETRIEVAL/MODIFICATION/REMOVAL
-  // async componentWillMount() {
-  //   console.log("will mount");
-  //   try {
-  //     const value = await AsyncStorage.getItem("@MySuperStore:list");
-  //     if (value !== null) {
-  //       this.setState({ user: JSON.parse(value).user });
-  //       console.log("data");
-  //       console.log(JSON.parse(value).user);
-  //     } else {
-  //       console.log("no storage");
-  //     }
-  //   } catch (error) {
-  //     // Error retrieving data
-  //   }
-  // }
-  //
-  // async update(value) {
-  //   try {
-  //     await AsyncStorage.setItem("@MySuperStore:list", JSON.stringify(value));
-  //   } catch (error) {
-  //     // Error saving data
-  //   }
-  // }
-  //
-  // async delete() {
-  //   await AsyncStorage.removeItem("@MySuperStore:list");
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false
+    };
+  }
+
+  async componentWillMount() {
+    console.log("will mount");
+    try {
+      const value = await AsyncStorage.getItem("@Storage:list");
+      if (value !== null) {
+        this.setState({ isLoading: true });
+        console.log("data");
+        console.log(JSON.parse(value).user);
+      } else {
+        console.log("no storage");
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  }
+
+  async update(value) {
+    try {
+      await AsyncStorage.setItem("@Storage:list", JSON.stringify(value));
+      console.log(JSON.parse(value));
+    } catch (error) {
+      // Error saving data
+    }
+  }
+
+  async delete() {
+    await AsyncStorage.removeItem("@Storage:list");
+  }
 
   //FUNCTIONS MODIFYING STATE
   clear = () => {
     this.props.dispatch({ type: "clear" });
-    // this.delete();
   };
 
   removeOne = index => {
@@ -67,10 +75,27 @@ class Home extends React.Component {
 
   //RENDER
   render() {
+    const noScan = () => {
+      return (
+        <View>
+          <TouchableOpacity
+            style={styles.image}
+            onPress={() =>
+              this.props.navigation.navigate("Modal", { add: this.add })
+            }
+          >
+            <Image source={require("../assets/empty.jpg")} />
+            <Text style={styles.textBlack}>
+              Tap the picture to scan your first QR code
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    };
+
     const list = this.props.user.map((aUser, idx) => {
       return (
         <View key={idx} style={styles.cell}>
-          {/* <TouchableOpacity onPress={() => this.removeOne(idx)}> */}
           <TouchableOpacity
             onLongPress={() =>
               Alert.alert(
@@ -90,31 +115,44 @@ class Home extends React.Component {
               )
             }
           >
-            <Text style={styles.textScroll}>
-              {aUser.secret} |
-              {aUser.issuer} |
-              {aUser.host}
-            </Text>
+            <Text style={styles.textScroll}>{aUser.secret} </Text>
+            <Text style={styles.textScroll}>{aUser.issuer} </Text>
+            <Text style={styles.textScroll}>{aUser.host} </Text>
           </TouchableOpacity>
         </View>
       );
     });
 
+    const listFilled = () => {
+      return (
+        <View style={styles.container}>
+          {list.length > 0 && <ScrollView>{list}</ScrollView>}
+          <TouchableOpacity
+            style={styles.buttonGreen}
+            onPress={() =>
+              this.props.navigation.navigate("Modal", { add: this.add })
+            }
+          >
+            <Text style={styles.text}>Add</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.buttonRed}
+            onPress={() => this.clear()}
+          >
+            <Text style={styles.text}>Clear</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    };
+
     return (
       <View style={styles.container}>
-        {list.length > 0 && <ScrollView>{list}</ScrollView>}
-        <TouchableOpacity
-          style={styles.buttonGreen}
-          onPress={() =>
-            this.props.navigation.navigate("Modal", { add: this.add })
-          }
-        >
-          <Text style={styles.text}>Add</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.buttonRed} onPress={() => this.clear()}>
-          <Text style={styles.text}>Clear</Text>
-        </TouchableOpacity>
+        {list.length == 0 ? (
+          <View style={styles.image}>{noScan()}</View>
+        ) : (
+          <View style={styles.container}>{listFilled()}</View>
+        )}
       </View>
     );
   }

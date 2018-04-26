@@ -17,7 +17,6 @@ function reducer(prevState = initState, action) {
   switch (action.type) {
     case "add":
       if (!_.some(prevState.user, action.payload.newCode)) {
-        // console.log(action.payload);
         return Object.assign({}, prevState, {
           user: [...prevState.user, action.payload.newCode]
         });
@@ -44,11 +43,15 @@ const store = createStore(reducer);
 
 export default class App extends React.Component {
   render() {
+    // if (this.state.isStoreLoading) {
+    //   return <Text>Loading Store ...</Text>;
+    // } else {
     return (
       <Provider store={store}>
         <RootStack />
       </Provider>
     );
+    // }
   }
 }
 
