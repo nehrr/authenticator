@@ -2,6 +2,7 @@ import React from "react";
 import { StackNavigator } from "react-navigation";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
+
 import _ from "lodash";
 import Home from "./screen/home";
 import Scan from "./screen/scan";
@@ -9,22 +10,16 @@ import Scan from "./screen/scan";
 console.disableYellowBox = true;
 
 const initState = {
-  user: [
-    {
-      issuer: "Test",
-      secret: "TestSecret",
-      host: "TestLabel"
-    }
-  ]
+  user: []
 };
 
 function reducer(prevState = initState, action) {
   switch (action.type) {
     case "add":
-      if (!_.some(prevState.user, action.payload)) {
-        console.log(action.payload);
+      if (!_.some(prevState.user, action.payload.newCode)) {
+        // console.log(action.payload);
         return Object.assign({}, prevState, {
-          user: [...prevState.user, action.payload]
+          user: [...prevState.user, action.payload.newCode]
         });
       } else {
         alert("This code has already been scanned!");
@@ -35,10 +30,8 @@ function reducer(prevState = initState, action) {
         user: []
       });
     case "removeOne":
-      let array = prevState.user;
-      array.splice(_.findIndex(array, value), 1);
-      this.setState({ user: array });
-      this.update({ user: array });
+      let array = [...prevState.user];
+      array.splice(action.payload.index, 1);
       return Object.assign({}, prevState, {
         user: array
       });

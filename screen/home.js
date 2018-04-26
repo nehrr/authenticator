@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  AsyncStorage
+  AsyncStorage,
+  Alert
 } from "react-native";
 import { connect } from "react-redux";
+
 import _ from "lodash";
 import styles from "../style/styles";
 
@@ -54,18 +56,13 @@ class Home extends React.Component {
   // }
 
   //FUNCTIONS MODIFYING STATE
-  add = data => {
-    this.props.dispatch({ type: "add" });
-    //   this.update({ user: [...this.state.user, data] });
-  };
-
-  clear() {
+  clear = () => {
     this.props.dispatch({ type: "clear" });
     // this.delete();
-  }
+  };
 
-  removeOne = value => {
-    this.props.dispatch({ type: "removeOne" });
+  removeOne = index => {
+    this.props.dispatch({ type: "removeOne", payload: { index } });
   };
 
   //RENDER
@@ -73,7 +70,26 @@ class Home extends React.Component {
     const list = this.props.user.map((aUser, idx) => {
       return (
         <View key={idx} style={styles.cell}>
-          <TouchableOpacity onPress={() => this.removeOne(aUser)}>
+          {/* <TouchableOpacity onPress={() => this.removeOne(idx)}> */}
+          <TouchableOpacity
+            onLongPress={() =>
+              Alert.alert(
+                "Warning",
+                "Do you really want to delete this code ?",
+                [
+                  {
+                    text: "Yes",
+                    onPress: () => this.removeOne(idx)
+                  },
+                  {
+                    text: "Cancel",
+                    style: "cancel"
+                  }
+                ],
+                { cancelable: true }
+              )
+            }
+          >
             <Text style={styles.textScroll}>
               {aUser.secret} |
               {aUser.issuer} |

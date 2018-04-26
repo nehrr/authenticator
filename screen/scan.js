@@ -46,9 +46,9 @@ class Scan extends React.Component {
       let array = data.match(regex);
 
       const [host, secret, issuer] = array.slice(1);
-      const res = { host, secret, issuer };
+      const newCode = { host, secret, issuer };
 
-      this.props.dispatch({ type: "add", payload: res });
+      this.props.dispatch({ type: "add", payload: { newCode } });
       this.props.navigation.goBack();
     }
   };
