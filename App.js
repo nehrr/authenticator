@@ -4,36 +4,58 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 
 import _ from "lodash";
+import {
+  QRCODE_ADD,
+  QRCODE_CLEAR,
+  QRCODE_REMOVE_AT,
+  QRCODE_ERROR,
+  QRCODE_INIT,
+  QRCODE_LOADING
+} from "./constants/actions";
 import Home from "./screen/home";
 import Scan from "./screen/scan";
 
 console.disableYellowBox = true;
 
 const initState = {
-  user: []
+  qr: [],
+  isLoading: false,
+  isError: false
 };
 
 function reducer(prevState = initState, action) {
   switch (action.type) {
-    case "add":
-      if (!_.some(prevState.user, action.payload.newCode)) {
-        return Object.assign({}, prevState, {
-          user: [...prevState.user, action.payload.newCode]
-        });
-      } else {
-        alert("This code has already been scanned!");
-        return prevState;
-      }
-    case "clear":
+    case QRCODE_LOADING:
       return Object.assign({}, prevState, {
-        user: []
+        isLoading: true
       });
-    case "removeOne":
-      let array = [...prevState.user];
-      array.splice(action.payload.index, 1);
+
+    case QRCODE_INIT:
       return Object.assign({}, prevState, {
-        user: array
+        qr: action.payload.list,
+        isLoading: true
       });
+
+    case QRCODE_ERROR:
+      return Object.assign({}, prevState, {
+        isError: true
+      });
+
+    case QRCODE_ADD:
+      return Object.assign({}, prevState, {
+        qr: action.payload.newCode
+      });
+
+    case QRCODE_CLEAR:
+      return Object.assign({}, prevState, {
+        qr: []
+      });
+
+    case QRCODE_REMOVE_AT:
+      return Object.assign({}, prevState, {
+        qr: action.payload.array
+      });
+
     default:
       return prevState;
   }
@@ -43,9 +65,6 @@ const store = createStore(reducer);
 
 export default class App extends React.Component {
   render() {
-    // if (this.state.isStoreLoading) {
-    //   return <Text>Loading Store ...</Text>;
-    // } else {
     return (
       <Provider store={store}>
         <RootStack />
