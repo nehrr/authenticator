@@ -37,6 +37,10 @@ class Home extends React.Component {
     }
   };
 
+  state = {
+    timer: null
+  };
+
   //DATA RETRIEVAL/MODIFICATION/REMOVAL
   componentWillMount() {
     console.log("will mount");
@@ -51,6 +55,13 @@ class Home extends React.Component {
     } catch (error) {
       this.props.dispatch({ type: QRCODE_ERROR });
     }
+  }
+
+  componentDidUpdate() {
+    const duration = 5000;
+    setInterval(() => {
+      this.setState({ state: this.state.timer + duration });
+    }, duration);
   }
 
   //FUNCTIONS MODIFYING STATE
@@ -75,14 +86,6 @@ class Home extends React.Component {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  renew_code = secret => {
-    let token = new TOTP(secret, 5);
-    setInterval(function() {
-      var newToken = token.generate();
-      console.log(newToken);
-    }, 5000);
   };
 
   //RENDER
@@ -112,8 +115,8 @@ class Home extends React.Component {
     }
 
     const list = this.props.qr.map((item, idx) => {
-      // var token = this.renew_code(item.secret);
-      // console.log(this.renew_code(item.secret));
+      let token = new TOTP(item.secret, 5);
+      var newToken = token.generate();
       return (
         <View key={idx} style={styles.cell}>
           <TouchableOpacity
@@ -138,8 +141,7 @@ class Home extends React.Component {
               )
             }
           >
-            {/* <Text style={styles.textScroll}>{token}</Text> */}
-            {/* <Text style={styles.textScroll}>{item.secret} </Text> */}
+            <Text style={styles.textScroll}>{newToken}</Text>
             <Text style={styles.textScroll}>{decodeURI(item.issuer)} </Text>
             <Text style={styles.textScroll}>{decodeURI(item.host)} </Text>
           </TouchableOpacity>
