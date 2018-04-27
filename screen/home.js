@@ -11,13 +11,15 @@ import {
   Image
 } from "react-native";
 import { connect } from "react-redux";
+import TOTP from "../lib/totp_js";
 
 import {
   QRCODE_ERROR,
   QRCODE_INIT,
   QRCODE_LOADING,
   QRCODE_CLEAR,
-  QRCODE_REMOVE_AT
+  QRCODE_REMOVE_AT,
+  QRCODE_UPDATE_TOKEN
 } from "../constants/actions";
 
 import _ from "lodash";
@@ -75,6 +77,14 @@ class Home extends React.Component {
     }
   };
 
+  renew_code = secret => {
+    let token = new TOTP(secret, 5);
+    setInterval(function() {
+      var newToken = token.generate();
+      console.log(newToken);
+    }, 5000);
+  };
+
   //RENDER
   render() {
     if (this.props.isLoading) {
@@ -90,9 +100,7 @@ class Home extends React.Component {
         <View>
           <TouchableOpacity
             style={styles.image}
-            onPress={() =>
-              this.props.navigation.navigate("Modal", { add: this.add })
-            }
+            onPress={() => this.props.navigation.navigate("Modal")}
           >
             <Image source={require("../assets/empty.jpg")} />
             <Text style={styles.textBlack}>
@@ -104,16 +112,21 @@ class Home extends React.Component {
     }
 
     const list = this.props.qr.map((item, idx) => {
+      // var token = this.renew_code(item.secret);
+      // console.log(this.renew_code(item.secret));
       return (
         <View key={idx} style={styles.cell}>
           <TouchableOpacity
             onLongPress={() =>
               Alert.alert(
                 "Warning",
-                "Do you really want to delete this code ?",
+                `Do you really want to delete the code for ${
+                  this.props.qr[idx].host
+                } ?`,
                 [
                   {
                     text: "Yes",
+                    style: "destructive",
                     onPress: () => this.remove_at(idx)
                   },
                   {
@@ -125,9 +138,10 @@ class Home extends React.Component {
               )
             }
           >
-            <Text style={styles.textScroll}>{item.secret} </Text>
-            <Text style={styles.textScroll}>{item.issuer} </Text>
-            <Text style={styles.textScroll}>{item.host} </Text>
+            {/* <Text style={styles.textScroll}>{token}</Text> */}
+            {/* <Text style={styles.textScroll}>{item.secret} </Text> */}
+            <Text style={styles.textScroll}>{decodeURI(item.issuer)} </Text>
+            <Text style={styles.textScroll}>{decodeURI(item.host)} </Text>
           </TouchableOpacity>
         </View>
       );

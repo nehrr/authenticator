@@ -10,7 +10,8 @@ import {
   QRCODE_REMOVE_AT,
   QRCODE_ERROR,
   QRCODE_INIT,
-  QRCODE_LOADING
+  QRCODE_LOADING,
+  QRCODE_UPDATE_TOKEN
 } from "./constants/actions";
 import Home from "./screen/home";
 import Scan from "./screen/scan";
@@ -54,6 +55,11 @@ function reducer(prevState = initState, action) {
     case QRCODE_REMOVE_AT:
       return Object.assign({}, prevState, {
         qr: action.payload.array
+      });
+
+    case QRCODE_UPDATE_TOKEN:
+      return Object.assign({}, prevState, {
+        qr: action.payload.token
       });
 
     default:

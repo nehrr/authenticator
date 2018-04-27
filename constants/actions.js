@@ -4,3 +4,4 @@ export const QRCODE_REMOVE_AT = "remove_at";
 export const QRCODE_INIT = "qr_init";
 export const QRCODE_LOADING = "qrcode_loading";
 export const QRCODE_ERROR = "qrcode_error";
+export const QRCODE_UPDATE_TOKEN = "qrcode_update_token";
