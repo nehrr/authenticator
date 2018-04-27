@@ -58,10 +58,18 @@ class Home extends React.Component {
   }
 
   componentDidUpdate() {
-    const duration = 5000;
-    setInterval(() => {
-      this.setState({ state: this.state.timer + duration });
-    }, duration);
+    // console.log("update");
+    const duration = 1000;
+    if (!this.state.timer) {
+      this.token = setInterval(() => {
+        this.setState({ timer: this.state.timer + duration });
+      }, duration);
+    }
+  }
+
+  componentWillUnmount() {
+    console.log("unmount");
+    clearInterval(this.token);
   }
 
   //FUNCTIONS MODIFYING STATE
@@ -115,7 +123,7 @@ class Home extends React.Component {
     }
 
     const list = this.props.qr.map((item, idx) => {
-      let token = new TOTP(item.secret, 5);
+      let token = new TOTP(item.secret, 1);
       var newToken = token.generate();
       return (
         <View key={idx} style={styles.cell}>
@@ -123,9 +131,9 @@ class Home extends React.Component {
             onLongPress={() =>
               Alert.alert(
                 "Warning",
-                `Do you really want to delete the code for ${
+                `Do you really want to delete the code for ${decodeURI(
                   this.props.qr[idx].host
-                } ?`,
+                )} ?`,
                 [
                   {
                     text: "Yes",
