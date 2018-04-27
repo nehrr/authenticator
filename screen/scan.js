@@ -51,7 +51,7 @@ class Scan extends React.Component {
   _handleBarCodeRead = ({ type, data }) => {
     console.log(type);
     const reg = /^otpauth:\/\/totp\/.+\?secret=.+&issuer=.*/;
-    if (!data.match(reg) && type !== "org.iso.QRCode") {
+    if (!data.match(reg)) {
       if (!this.isError) {
         this.isError = true;
         alert("This is not a valid QRCode");
@@ -60,7 +60,7 @@ class Scan extends React.Component {
         return;
       }
     }
-    if (!this.isRead && type == "org.iso.QRCode") {
+    if (!this.isRead) {
       this.isRead = true;
       //if regex not matched error > does not add
       const regex = /^otpauth:\/\/totp\/(.+)\?secret=(.+)&issuer=(.*)/;
